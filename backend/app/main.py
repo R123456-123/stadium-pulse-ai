@@ -5,12 +5,14 @@ without side effects — important for testing, where you want to create
 a fresh app instance per test with different settings.
 
 Lifespan handles:
-    1. Startup: initialize database engine, create tables, setup logging
-    2. Shutdown: close database connections cleanly
+    1. Startup: initialize database engine, create tables, setup logging,
+       start the crowd simulator background task
+    2. Shutdown: stop the crowd simulator, close database connections
 """
 
-from contextlib import asynccontextmanager
+import asyncio
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI
@@ -47,9 +49,29 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     await create_tables()
     logger.info("database_ready", url=settings.database_url.split("///")[0] + "///***")
 
+    # Start crowd simulator as a background task
+    from app.core.database import _async_session_factory
+    from app.routers.ws_crowd import manager as ws_manager
+    from app.services.crowd_simulator import CrowdSimulator
+
+    simulator = CrowdSimulator(
+        session_factory=_async_session_factory,
+        broadcast_fn=ws_manager.broadcast,
+    )
+    simulator_task = asyncio.create_task(simulator.run())
+    logger.info("crowd_simulator_task_created")
+
     yield
 
     # ── Shutdown ─────────────────────────────────────────────
+    simulator.stop()
+    simulator_task.cancel()
+    try:
+        await simulator_task
+    except asyncio.CancelledError:
+        pass
+    logger.info("crowd_simulator_stopped")
+
     await close_engine()
     logger.info("application_shutdown_complete")
 
@@ -93,12 +115,12 @@ def create_app() -> FastAPI:
         }
 
     # ── Routers ──────────────────────────────────────────────
-    from app.routers import stadium_info
+    from app.routers import stadium_info, ws_crowd
 
     app.include_router(stadium_info.router)
+    app.include_router(ws_crowd.router)
     # app.include_router(fan_chat.router)       # Phase 5
     # app.include_router(ops_dashboard.router)  # Phase 6
-    # app.include_router(ws_crowd.router)       # Phase 3
 
     return app
 
