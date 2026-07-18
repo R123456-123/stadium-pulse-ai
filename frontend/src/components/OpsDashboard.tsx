@@ -23,7 +23,7 @@ const OpsDashboard: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/api/v1/ws/crowd');
+    const ws = new WebSocket('wss://stadium-pulse-ai-t33k.onrender.com/api/v1/ws/crowd');
 
     ws.onmessage = (event) => {
       try {

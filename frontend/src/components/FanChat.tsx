@@ -46,7 +46,7 @@ const FanChat: React.FC = () => {
         .filter(m => m.id !== 'welcome')
         .map(m => ({ role: m.role, content: m.content }));
 
-      const response = await fetch('http://localhost:8000/api/v1/chat', {
+      const response = await fetch('https://stadium-pulse-ai-t33k.onrender.com/api/v1/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage, history })
