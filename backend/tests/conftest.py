@@ -38,7 +38,7 @@ def test_settings() -> Settings:
         debug=True,
         database_url="sqlite+aiosqlite:///",
         gemini_api_key="test-key-not-real",
-        gemini_model="gemini-2.5-flash",
+        gemini_model="gemini-2.5-flash-lite",
         cors_origins=["http://testserver"],
         rate_limit_chat="100/minute",
     )

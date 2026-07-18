@@ -114,13 +114,12 @@ def create_app() -> FastAPI:
             "version": settings.app_version,
         }
 
-    # ── Routers ──────────────────────────────────────────────
-    from app.routers import stadium_info, ws_crowd
+    from app.routers import stadium_info, ws_crowd, fan_chat, ops
 
     app.include_router(stadium_info.router)
     app.include_router(ws_crowd.router)
-    # app.include_router(fan_chat.router)       # Phase 5
-    # app.include_router(ops_dashboard.router)  # Phase 6
+    app.include_router(fan_chat.router, prefix="/api/v1")
+    app.include_router(ops.router, prefix="/api/v1")
 
     return app
 
@@ -128,3 +127,5 @@ def create_app() -> FastAPI:
 # ── Application instance ─────────────────────────────────────
 # This is what uvicorn imports: uvicorn app.main:app
 app = create_app()
+
+# Triggering reload to apply .env changes 3

@@ -1,0 +1,67 @@
+Traceback (most recent call last):
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\app\services\ai.py", line 130, in chat_with_tools
+    response = await chat.send_message(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\chats.py", line 428, in send_message
+    response = await self._modules.generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\models.py", line 8730, in generate_content
+    response = await self._generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        model=model, contents=contents, config=final_parsed_config_to_call
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\models.py", line 7176, in _generate_content
+    response = await self._api_client.async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        'post', path, request_dict, http_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\_api_client.py", line 1696, in async_request
+    result = await self._async_request(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        http_request=http_request, http_options=http_options, stream=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\_api_client.py", line 1629, in _async_request
+    return await self._async_retry(  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self._async_request_once, http_request, stream
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\asyncio\__init__.py", line 112, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\asyncio\__init__.py", line 157, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\_utils.py", line 111, in inner
+    return call(*args, **kwargs)
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ABC\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 449, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ABC\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\tenacity\asyncio\__init__.py", line 116, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\_api_client.py", line 1609, in _async_request_once
+    await errors.APIError.raise_for_async_response(client_response)
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\errors.py", line 247, in raise_for_async_response
+    await cls.raise_error_async(status_code, response_json, response)
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\venv\Lib\site-packages\google\genai\errors.py", line 269, in raise_error_async
+    raise ClientError(status_code, response_json, response)
+google.genai.errors.ClientError: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
