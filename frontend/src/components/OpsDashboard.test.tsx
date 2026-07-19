@@ -20,7 +20,10 @@ class MockWebSocket {
 
   static instances: MockWebSocket[] = [];
 
-  constructor(public url: string) {
+  url: string;
+
+  constructor(url: string) {
+    this.url = url;
     this.readyState = 0; // CONNECTING
     MockWebSocket.instances.push(this);
     
