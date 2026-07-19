@@ -543,6 +543,8 @@ async def seed_database() -> None:
     Records with existing primary keys are updated; new ones are inserted.
     """
     from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
+    from sqlalchemy import select
+    from app.models.zone import Zone
 
     from app.core.database import _async_session_factory
 
@@ -552,6 +554,12 @@ async def seed_database() -> None:
     session_factory: async_sessionmaker[AsyncSession] = _async_session_factory
 
     async with session_factory() as session:
+        # Check if already seeded to prevent duplicate auto-increment records
+        result = await session.execute(select(Zone).limit(1))
+        if result.scalars().first() is not None:
+            logger.info("database_already_seeded")
+            return
+
         # Zones
         for zone_data in ZONES:
             zone = Zone(**zone_data)

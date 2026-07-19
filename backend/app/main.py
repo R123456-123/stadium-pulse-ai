@@ -47,6 +47,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Initialize database
     init_engine(settings.database_url, echo=settings.debug)
     await create_tables()
+    
+    from app.seed.seed_data import seed_database
+    await seed_database()
+    
     logger.info("database_ready", url=settings.database_url.split("///")[0] + "///***")
 
     # Start crowd simulator as a background task
