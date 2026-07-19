@@ -45,19 +45,9 @@ async def chat_endpoint(request: ChatRequest) -> ChatResponse:
     2. If unsafe, returns a polite refusal immediately.
     3. If safe, (future phase) passes to the main Gemini model with tools.
     """
-    # ── 1. Input Guard ─────────────────────────────────────────
-    guard_result = await gemini_service.check_input_safety(request.message)
-    
-    if not guard_result.is_safe:
-        logger.warning("chat_rejected_by_guard", reason=guard_result.reason)
-        # We don't return the raw reason to the user to avoid leaking system instructions
-        return ChatResponse(
-            reply="I'm sorry, but I can only answer questions related to the stadium, event operations, or fan assistance. How can I help you with your visit today?",
-            is_safe=False,
-            blocked_reason=guard_result.reason,
-        )
-
-    # ── 2. Main Chat with Tools ────────────────────────────────
+    # ── 1. Main Chat with Tools ────────────────────────────────
+    # Prompt injection guard is now integrated into the main system prompt 
+    # to save 50% on API quota and reduce latency.
     from app.services.ai_tools import stadium_tools
     
     reply_text = await gemini_service.chat_with_tools(

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, NavLink } from 'react-router-dom';
-import { Bot, Activity, Menu, Zap } from 'lucide-react';
-import FanChat from './components/FanChat';
-import OpsDashboard from './components/OpsDashboard';
+import { Bot, Activity, Menu, Zap, Loader2 } from 'lucide-react';
 import './components/Layout.css';
+
+const FanChat = lazy(() => import('./components/FanChat'));
+const OpsDashboard = lazy(() => import('./components/OpsDashboard'));
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,20 +16,22 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <h1 className="brand-text">Stadium<span className="gradient-text">Pulse</span></h1>
         </div>
         
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" aria-label="Main Navigation">
           <NavLink 
             to="/chat" 
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            aria-label="Fan Assistant Chat"
           >
-            <Bot size={20} />
+            <Bot size={20} aria-hidden="true" />
             <span>Fan Assistant</span>
           </NavLink>
           
           <NavLink 
             to="/ops" 
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            aria-label="Operations Dashboard"
           >
-            <Activity size={20} />
+            <Activity size={20} aria-hidden="true" />
             <span>Ops Dashboard</span>
           </NavLink>
         </nav>
@@ -59,11 +62,17 @@ function App() {
   return (
     <BrowserRouter>
       <Layout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/chat" replace />} />
-          <Route path="/chat" element={<FanChat />} />
-          <Route path="/ops" element={<OpsDashboard />} />
-        </Routes>
+        <Suspense fallback={
+          <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#a1a1aa' }}>
+            <Loader2 className="spinner" size={32} />
+          </div>
+        }>
+          <Routes>
+            <Route path="/" element={<Navigate to="/chat" replace />} />
+            <Route path="/chat" element={<FanChat />} />
+            <Route path="/ops" element={<OpsDashboard />} />
+          </Routes>
+        </Suspense>
       </Layout>
     </BrowserRouter>
   );

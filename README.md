@@ -1,74 +1,45 @@
 # StadiumPulse AI 🏟️
 
-Smart Stadium Operations & Fan Assistant built for the **Google PromptWars (Hack2Skill) — Challenge 4: Smart Stadiums & Tournament Operations**.
-
-> **Disclaimer:** This project uses a fictional venue ("Continental Park Stadium") built specifically for a hackathon submission. It is not affiliated with or endorsed by FIFA.
+Smart Stadium Operations & Fan Assistant built for the **Google PromptWars (Hack2Skill)**.
 
 ## 🔗 Important Links
-* **GitHub Repository:** [Insert Github Link Here]
-* **Live Deployment:** [Insert Deployment Link Here]
-* **LinkedIn Post:** [Insert Linkedin Post Link Here]
+* **GitHub Repository:** https://github.com/R123456-123/stadium-pulse-ai
+* **Live Deployment:** https://stadium-pulse-ai-blush.vercel.app/
+* **LinkedIn Post:** [LinkedIn Post](https://www.linkedin.com/posts/rishiraj-tanwar_googlepromptwars-hack2skill-googlegemini-share-7484251326298669056-bXJt)
 
-## 🌟 Overview
+## 🌟 What We Built
+StadiumPulse AI is a real-time smart stadium platform that serves two main purposes:
+1. **Fan Assistant**: An AI chatbot that helps fans navigate the stadium, find restrooms, get live gate wait times, and read stadium policies.
+2. **Operations Dashboard**: A live command center for stadium staff to monitor crowd density and get AI-generated safety alerts when zones get too crowded.
 
-StadiumPulse AI provides a unified backend and real-time operations engine for a smart stadium. It serves two main personas:
-1. **Fan Assistant**: An AI chatbot (powered by Google Gemini) that helps fans navigate the stadium, find facilities, get real-time queue updates, and answer FAQs.
-2. **Ops Dashboard**: A real-time monitoring view for stadium staff to track crowd density, gate queues, and stadium occupancy dynamically.
+## 🛠️ What We Used
+* **Frontend:** React, TypeScript, Vite
+* **Backend:** FastAPI, Python, SQLite, WebSockets
+* **AI & Logic:** Google Gemini API (`gemini-3.1-flash-lite`)
 
-## 🛠️ Tech Stack
+## 🧠 How We Used Google Services (Gemini)
+Google Gemini is the core brain of our application. We used it in two powerful ways:
+1. **Automated Function Calling (AFC):** Instead of hallucinating answers, our Fan Assistant uses Gemini's Function Calling feature. When a fan asks "Where is the restroom?", Gemini automatically triggers our Python backend functions to query the live SQLite database and returns real, accurate locations.
+2. **Built-in Prompt Guard:** We integrated strict system instructions directly into our Gemini prompt to gracefully handle off-topic questions and prompt injections, keeping the bot completely focused on stadium operations.
 
-* **Frontend:** React, TypeScript, Vite, Vanilla CSS (Glassmorphism & Neon Design)
-* **Backend:** FastAPI, Python, SQLite (aiosqlite)
-* **AI Engine:** Google Gemini (Gemini 2.5 Flash Lite) with Automatic Function Calling
-* **Real-time Data:** WebSockets for live crowd simulation
+## 🚀 Important Deployment Instructions
+If you are deploying this project, you must set these environment variables!
 
-## 🚀 Key Features
+### Backend (e.g. Render)
+Ensure these environment variables are set on your backend host:
+* `GEMINI_API_KEY` = Your Google AI Studio Key
+* `GEMINI_MODEL` = `gemini-3.1-flash-lite`
 
-* **AI Tool Calling:** The Fan Assistant interacts directly with the live database using Gemini Function Calling to give accurate, non-hallucinated answers about wait times and locations.
-* **Prompt Injection Guard:** An input guard checks messages using deterministic AI models to prevent jailbreaks or out-of-context requests.
-* **Live Crowd Simulator:** A background engine dynamically simulates crowd curves, advancing match time and updating queues every 5 seconds.
+### Frontend (Vercel)
+Our frontend relies on environment variables to know where the backend is. In your Vercel project settings, you **must** add:
+* `VITE_API_URL` = `https://stadium-pulse-ai-t33k.onrender.com`
+* `VITE_WS_URL` = `wss://stadium-pulse-ai-t33k.onrender.com/api/v1/ws/crowd`
 
-## 💻 Local Setup Instructions
+**Important:** After adding these on Vercel, you must trigger a **Redeploy** so the frontend can successfully connect to the AI and live data!
 
-### 1. Requirements
-- Python 3.11+
-- Node.js (v18+)
-- Google Gemini API Key (get from [AI Studio](https://aistudio.google.com/))
-
-### 2. Backend Setup
-```bash
-# Clone the repository
-git clone https://github.com/R123456-123/stadium-pulse-ai.git
-cd stadium-pulse-ai/backend
-
-# Create and activate a virtual environment
-python -m venv venv
-.\venv\Scripts\Activate.ps1   # On Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-copy .env.example .env
-# Edit .env and set your GEMINI_API_KEY
-
-# Seed the initial database
-python -m app.seed.seed_data
-
-# Start the FastAPI server
-uvicorn app.main:app --reload --port 8000
-```
-
-### 3. Frontend Setup
-Open a new terminal window:
-```bash
-cd stadium-pulse-ai/frontend
-
-# Install dependencies
-npm install
-
-# Start the React development server
-npm run dev
-```
-
-The web application will be available at `http://localhost:5173`. Interactive API documentation can be accessed at `http://localhost:8000/docs`.
+## 💻 Local Testing
+1. Navigate to the `backend/` folder. 
+2. Add your `.env` file with your `GEMINI_API_KEY`.
+3. Run `pip install -r requirements.txt` and start the server with `uvicorn app.main:app --reload`.
+4. In a separate terminal, navigate to the `frontend/` folder. 
+5. Run `npm install` and start the UI with `npm run dev`.

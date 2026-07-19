@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # ── Gemini AI ────────────────────────────────────────────
     gemini_api_key: str  # Required — no default, must be set in .env
-    gemini_model: str = "gemini-2.5-flash-lite"
+    gemini_model: str = "gemini-3.1-flash-lite"
 
     # ── CORS ─────────────────────────────────────────────────
     cors_origins: list[str] = ["http://localhost:5173"]
