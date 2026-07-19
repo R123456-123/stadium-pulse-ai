@@ -45,7 +45,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <Zap className="brand-icon" size={24} />
             <h1 className="brand-text">Stadium<span className="gradient-text">Pulse</span></h1>
           </div>
-          <button className="menu-btn">
+          <button className="menu-btn" aria-label="Open mobile menu">
             <Menu size={24} />
           </button>
         </header>

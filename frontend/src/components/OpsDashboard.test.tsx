@@ -1,90 +1,55 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
 import OpsDashboard from './OpsDashboard';
 
-// Mock ResizeObserver for Recharts
-class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-global.ResizeObserver = ResizeObserverMock;
-
-// Mock WebSocket
-class MockWebSocket {
-  onopen: any;
-  onmessage: any;
-  onclose: any;
-  onerror: any;
-  readyState: number;
-
-  static instances: MockWebSocket[] = [];
-
-  url: string;
-
-  constructor(url: string) {
-    this.url = url;
-    this.readyState = 0; // CONNECTING
-    MockWebSocket.instances.push(this);
-    
-    // Auto-connect
-    setTimeout(() => {
-      this.readyState = 1; // OPEN
-      if (this.onopen) this.onopen();
-    }, 10);
-  }
-
-  close() {
-    this.readyState = 3; // CLOSED
-    if (this.onclose) this.onclose();
-  }
-
-  send() {}
-  
-  // Helper to trigger message from outside
-  triggerMessage(data: any) {
-    if (this.onmessage) {
-      this.onmessage({ data: JSON.stringify(data) });
-    }
-  }
-}
-
-global.WebSocket = MockWebSocket as any;
+// Access the shared MockWebSocket from setupTests.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MockWebSocket = (window as any).__MockWebSocket;
 
 describe('OpsDashboard Component', () => {
   beforeEach(() => {
-    MockWebSocket.instances = [];
-    vi.clearAllMocks();
+    MockWebSocket.resetInstances();
   });
 
   it('renders initial mock data', () => {
     render(<OpsDashboard />);
     expect(screen.getByText('Operations Command Center')).toBeInTheDocument();
-    expect(screen.getByText('RECONNECTING...')).toBeInTheDocument(); // Initially connecting
+    expect(screen.getByText('RECONNECTING...')).toBeInTheDocument();
   });
 
   it('connects to WebSocket and updates data', async () => {
     render(<OpsDashboard />);
-    
-    // Wait for connection to establish
+
+    // The component creates a WebSocket in useEffect — wait for it
+    await waitFor(() => {
+      expect(MockWebSocket.instances.length).toBeGreaterThan(0);
+    });
+
+    const ws = MockWebSocket.instances[0];
+
+    // Simulate the server accepting the connection
+    act(() => {
+      ws.simulateOpen();
+    });
+
     await waitFor(() => {
       expect(screen.getByText('LIVE SYSTEM ACTIVE')).toBeInTheDocument();
     });
 
-    const ws = MockWebSocket.instances[0];
-    
-    // Trigger message
-    ws.triggerMessage({
-      zones: [
-        { name: 'North Stand', current_occupancy: 5000, capacity: 10000 }
-      ],
-      alerts: [
-        { level: 'critical', zone_name: 'North Stand', message: 'Too crowded' }
-      ]
+    // Simulate a data push from the server
+    act(() => {
+      ws.simulateMessage({
+        zones: [
+          { name: 'North Stand', current_occupancy: 5000, capacity: 10000 },
+        ],
+        alerts: [
+          { level: 'critical', zone_name: 'North Stand', message: 'Too crowded' },
+        ],
+      });
     });
 
     await waitFor(() => {
-      expect(screen.getByText('5,000')).toBeInTheDocument(); // total occupancy updated
+      expect(screen.getByText('5,000')).toBeInTheDocument();
       expect(screen.getByText('Out of 10,000')).toBeInTheDocument();
       expect(screen.getByText('Too crowded')).toBeInTheDocument();
     });

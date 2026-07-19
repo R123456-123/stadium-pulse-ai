@@ -3,7 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FanChat from './FanChat';
 
 // Mock fetch for the API calls
-global.fetch = vi.fn();
+const fetchMock = vi.fn();
+global.fetch = fetchMock;
 
 describe('FanChat Component', () => {
   beforeEach(() => {
@@ -18,7 +19,7 @@ describe('FanChat Component', () => {
   });
 
   it('sends a message and displays loading state', async () => {
-    (global.fetch as any).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ reply: 'The nearest restroom is at Gate 3.' }),
     });
@@ -42,7 +43,7 @@ describe('FanChat Component', () => {
   });
 
   it('handles quick action buttons', async () => {
-    (global.fetch as any).mockResolvedValueOnce({
+    fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ reply: 'Restrooms are everywhere.' }),
     });
@@ -61,7 +62,7 @@ describe('FanChat Component', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+    fetchMock.mockRejectedValueOnce(new Error('Network error'));
 
     render(<FanChat />);
     const input = screen.getByPlaceholderText(/Ask me about restrooms/i);

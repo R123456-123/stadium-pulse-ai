@@ -68,8 +68,8 @@ const FanChat: React.FC = () => {
         content: data.reply
       };
       setMessages(prev => [...prev, botMsg]);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // Intentionally swallowing error to show user-friendly message
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',

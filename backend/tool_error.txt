@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\ABC\Desktop\StadiumPulse AI\backend\app\services\ai_tools.py", line 86, in find_facilities
+    async with database._async_session_factory() as session:
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TypeError: 'NoneType' object is not callable

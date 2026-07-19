@@ -58,7 +58,7 @@ const OpsDashboard: React.FC = () => {
         try {
           const data = JSON.parse(event.data);
           if (data.zones) {
-            const updatedZones = data.zones.map((z: any) => ({
+            const updatedZones = data.zones.map((z: { name: string; current_occupancy: number; capacity: number }) => ({
               name: z.name,
               occupancy: z.current_occupancy,
               capacity: z.capacity
@@ -66,7 +66,7 @@ const OpsDashboard: React.FC = () => {
             setZones(updatedZones);
           }
           if (data.alerts) {
-            const updatedRecommendations = data.alerts.map((a: any) => ({
+            const updatedRecommendations = data.alerts.map((a: { level: string; zone_name: string; message: string }) => ({
               priority: a.level === 'critical' ? 'High' : 'Medium',
               action: `Review status in ${a.zone_name}`,
               reason: a.message
@@ -75,8 +75,8 @@ const OpsDashboard: React.FC = () => {
               { priority: 'Low', action: 'All clear', reason: 'No immediate action required.' }
             ]);
           }
-        } catch (error) {
-          console.error('Error parsing websocket data', error);
+        } catch {
+          // Silent error handling for WebSocket JSON parse
         }
       };
       
@@ -87,9 +87,8 @@ const OpsDashboard: React.FC = () => {
         reconnectTimeout = setTimeout(connect, 3000);
       };
       
-      ws.onerror = (error) => {
-        console.error('WebSocket Error', error);
-        // On error, the connection will likely close, triggering onclose and reconnect.
+      ws.onerror = () => {
+        // Silent error handler. The connection will likely close, triggering onclose and reconnect.
       };
     };
 
