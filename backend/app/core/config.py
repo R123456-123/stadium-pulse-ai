@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.1-flash-lite"
 
     # ── CORS ─────────────────────────────────────────────────
-    cors_origins: list[str] = ["http://localhost:5173"]
+    cors_origins: list[str] = ["http://localhost:5173", "https://stadium-pulse-ai-blush.vercel.app"]
 
     # ── Rate Limiting ────────────────────────────────────────
     rate_limit_chat: str = "10/minute"
